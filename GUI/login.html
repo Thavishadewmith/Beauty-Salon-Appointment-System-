@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-96">
+        <h2 class="text-2xl font-bold text-center">Login</h2>
+        <form id="loginForm" class="mt-4">
+            <div class="mb-3">
+                <label class="block text-gray-700 font-bold">Email</label>
+                <input type="email" id="email" class="w-full p-2 border rounded-md" placeholder="Enter your email" required>
+            </div>
+            <div class="mb-3">
+                <label class="block text-gray-700 font-bold">Password</label>
+                <input type="password" id="password" class="w-full p-2 border rounded-md" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="bg-pink-500 text-white px-4 py-2 w-full rounded-lg">Login</button>
+        </form>
+
+        <p class="text-gray-600 text-center mt-4">
+            Don't have an account? <a href="register.html" class="text-pink-500">Sign up</a>
+        </p>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+
+            if (email === "user@example.com" && password === "password123") {
+                localStorage.setItem("loggedIn", "true");
+                alert("Login Successful!");
+                window.location.href = "profile.html"; 
+            } else {
+                alert("Invalid credentials. Try again.");
+            }
+        });
+    </script>
+</body>
+</html>
