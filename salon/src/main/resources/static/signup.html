@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beauty Salon - Sign Up</title>
+    <link rel="icon" type="image.png" href="favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            margin: 2rem auto;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .error {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<!-- Navbar -->
+<nav class="bg-black p-4 z-20 w-full">
+    <div class="container mx-auto flex justify-between items-center">
+        <!-- Brand -->
+        <a href="index.html" class="text-white text-xl font-semibold">Beauty Salon</a>
+        <div class="space-x-4">
+            <a href="index.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Home</a>
+            <a href="service.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Services</a>
+            <a href="reviews.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Reviews</a>
+            <a href="booking.html" class="text-white px-4 py-2 border-2 border-white hover:bg-white hover:text-black rounded-lg transition duration-300">BOOK NOW</a>
+            <a href="login.html" class="text-white px-4 py-2 border-2 border-white hover:bg-white hover:text-black rounded-lg transition duration-300">Login</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="flex-grow">
+    <div class="form-container">
+        <h1 class="text-3xl font-bold text-black mb-8 text-center">Sign Up</h1>
+        
+        <form id="signupForm">
+            <div class="mb-6">
+                <label for="fullName" class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
+                <input type="text" id="fullName" name="fullName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black" required>
+            </div>
+            <div class="mb-6">
+                <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username</label>
+                <input type="text" id="username" name="username" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black" required>
+            </div>
+            <div class="mb-6">
+                <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black" required>
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                <input type="password" id="password" name="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black" required>
+            </div>
+            <div class="mb-6">
+                <label for="confirmPassword" class="block text-gray-700 text-sm font-bold mb-2">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black" required>
+            </div>
+            <button type="submit" class="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition duration-300">Sign Up</button>
+        </form>
+        
+        <p class="mt-4 text-center text-gray-600">
+            Already have an account? <a href="login.html" class="text-black font-semibold hover:underline">Login</a>
+        </p>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-black text-white text-center py-4">
+    <p>&copy; 2025 Beauty Salon By Aadi. All rights reserved.</p>
+</footer>
+
+<div id="popup" class="popup"></div>
+
+<script>
+    function showPopup(message, isError = false) {
+        const popup = document.getElementById('popup');
+        popup.textContent = message;
+        popup.style.display = 'block';
+        popup.classList.toggle('error', isError);
+        
+        setTimeout(() => {
+            popup.style.display = 'none';
+            popup.classList.remove('error');
+        }, 3000);
+    }
+
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (password !== confirmPassword) {
+            showPopup('Passwords do not match', true);
+            return;
+        }
+        
+        const userData = {
+            username: document.getElementById('username').value,
+            password: password,
+            email: document.getElementById('email').value,
+            fullName: document.getElementById('fullName').value
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                showPopup(data.message);
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } else {
+                showPopup(data.message, true);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showPopup('An error occurred. Please try again.', true);
+        }
+    });
+</script>
+
+</body>
+</html>

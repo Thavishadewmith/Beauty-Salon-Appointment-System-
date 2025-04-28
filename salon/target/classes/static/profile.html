@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beauty Salon - My Profile</title>
+    <link rel="icon" type="image.png" href="favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        .main-content {
+            padding-top: 80px;
+        }
+        .appointment-card {
+            transition: all 0.3s ease;
+        }
+        .appointment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgb(0, 0, 0);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .error {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Navbar -->
+    <nav class="navbar p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-white text-xl font-semibold">Beauty Salon</a>
+            <div class="space-x-4">
+                <a href="index.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Home</a>
+                <a href="service.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Services</a>
+                <a href="reviews.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Reviews</a>
+                <a href="booking.html" class="text-white px-4 py-2 border-2 border-white hover:bg-white hover:text-black rounded-lg transition duration-300">BOOK NOW</a>
+                <a href="profile.html" class="text-white px-4 py-2 border-2 border-white hover:bg-white hover:text-black rounded-lg transition duration-300">My Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content container mx-auto p-8">
+        <!-- Welcome Section -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome, <span id="username">User</span>!</h1>
+            <p class="text-gray-600">Manage your appointments and profile settings here.</p>
+        </div>
+
+        <!-- Appointments Section -->
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Your Appointments</h2>
+            <div id="appointmentsList" class="space-y-4">
+                <!-- Appointments will be loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Popup for messages -->
+    <div id="popup" class="popup"></div>
+
+    <script>
+        // Check if user is logged in
+        window.onload = function() {
+            const username = localStorage.getItem('username');
+            if (!username) {
+                window.location.href = 'login.html';
+                return;
+            }
+            document.getElementById('username').textContent = username;
+            loadAppointments();
+        };
+
+        function showPopup(message, isError = false) {
+            const popup = document.getElementById('popup');
+            popup.textContent = message;
+            popup.style.display = 'block';
+            popup.classList.toggle('error', isError);
+            
+            setTimeout(() => {
+                popup.style.display = 'none';
+                popup.classList.remove('error');
+            }, 3000);
+        }
+
+        async function loadAppointments() {
+            try {
+                const response = await fetch('http://localhost:8080/api/appointments/user', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load appointments');
+                }
+
+                const appointments = await response.json();
+                const appointmentsList = document.getElementById('appointmentsList');
+
+                if (appointments.length === 0) {
+                    appointmentsList.innerHTML = '<p class="text-gray-600">You have no appointments scheduled.</p>';
+                    return;
+                }
+
+                appointmentsList.innerHTML = appointments.map(appointment => `
+                    <div class="appointment-card bg-gray-50 rounded-lg p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800">${appointment.serviceName}</h3>
+                                <p class="text-gray-600">Date: ${new Date(appointment.date).toLocaleDateString()}</p>
+                                <p class="text-gray-600">Time: ${appointment.time}</p>
+                                <p class="text-gray-600">Status: <span class="font-semibold ${appointment.status === 'CONFIRMED' ? 'text-green-600' : 'text-yellow-600'}">${appointment.status}</span></p>
+                            </div>
+                            <button onclick="cancelAppointment('${appointment.id}')" 
+                                    class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error:', error);
+                showPopup('Failed to load appointments. Please try again.', true);
+            }
+        }
+
+        async function cancelAppointment(appointmentId) {
+            if (!confirm('Are you sure you want to cancel this appointment?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/appointments/${appointmentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to cancel appointment');
+                }
+
+                showPopup('Appointment cancelled successfully');
+                loadAppointments(); // Refresh the appointments list
+            } catch (error) {
+                console.error('Error:', error);
+                showPopup('Failed to cancel appointment. Please try again.', true);
+            }
+        }
+    </script>
+</body>
+</html> 
