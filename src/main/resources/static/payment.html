@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Beauty Salon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        .main-content {
+            padding-top: 80px;
+        }
+        .payment-option {
+            transition: all 0.3s ease;
+        }
+        .payment-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .payment-option.selected {
+            border-color: #4f46e5;
+            background-color: #f3f4f6;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgb(0, 0, 0);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .error {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Navbar -->
+    <nav class="navbar p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-white text-xl font-semibold">Beauty Salon</a>
+            <div class="space-x-4">
+                <a href="index.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Home</a>
+                <a href="service.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Services</a>
+                <a href="reviews.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Reviews</a>
+                <a href="book.html" class="text-white px-4 py-2 border-2 border-white hover:bg-white hover:text-black rounded-lg transition duration-300">BOOK NOW</a>
+                <a href="login.html" id="loginLink" class="text-white px-4 py-2 border-2 border-white hover:bg-white hover:text-black rounded-lg transition duration-300">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container mx-auto p-8">
+            <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
+                <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Complete Your Booking</h1>
+                
+                <!-- Appointment Summary -->
+                <div class="bg-gray-50 p-6 rounded-lg mb-8">
+                    <h2 class="text-xl font-semibold mb-4">Appointment Details</h2>
+                    <div class="space-y-2">
+                        <p><span class="font-medium">Service:</span> <span id="serviceSummary"></span></p>
+                        <p><span class="font-medium">Date:</span> <span id="dateSummary"></span></p>
+                        <p><span class="font-medium">Time:</span> <span id="timeSummary"></span></p>
+                        <p><span class="font-medium">Price:</span> <span id="priceSummary" class="text-indigo-600 font-semibold"></span></p>
+                    </div>
+                </div>
+
+                <!-- Payment Options -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold mb-4">Select Payment Method</h2>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="payment-option p-4 border rounded-lg cursor-pointer" data-method="online">
+                            <div class="flex items-center">
+                                <i class="fas fa-credit-card text-2xl text-indigo-600 mr-4"></i>
+                                <div>
+                                    <h3 class="text-lg font-medium">Pay Online</h3>
+                                    <p class="text-gray-500">Pay securely with your credit card</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="payment-option p-4 border rounded-lg cursor-pointer" data-method="cash">
+                            <div class="flex items-center">
+                                <i class="fas fa-store text-2xl text-indigo-600 mr-4"></i>
+                                <div>
+                                    <h3 class="text-lg font-medium">Pay Cash </h3>
+                                    <p class="text-gray-500">Pay when you arrive for your appointment</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="paymentMethod" name="paymentMethod" required>
+                </div>
+
+                <!-- Payment Form (shown only for online payment) -->
+                <div id="onlinePaymentForm" class="hidden">
+                    <h2 class="text-xl font-semibold mb-4">Card Details</h2>
+                    <form id="cardForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Card Number</label>
+                            <input type="text" id="cardNumber" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="1234 5678 9012 3456">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Expiry Date</label>
+                                <input type="text" id="expiryDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="MM/YY">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">CVV</label>
+                                <input type="text" id="cvv" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="123">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <button id="confirmPayment" class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition duration-300">
+                    Complete Booking
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white shadow-lg mt-12">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-gray-500 text-sm">
+                © 2024 Beauty Salon. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Popup for messages -->
+    <div id="popup" class="popup"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get appointment details from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const service = urlParams.get('service');
+            const date = urlParams.get('date');
+            const time = urlParams.get('time');
+            const price = urlParams.get('price');
+
+            // Display appointment summary
+            document.getElementById('serviceSummary').textContent = service;
+            document.getElementById('dateSummary').textContent = new Date(date).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('timeSummary').textContent = time;
+            document.getElementById('priceSummary').textContent = `$${price}`;
+
+            // Payment method selection
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            const paymentMethodInput = document.getElementById('paymentMethod');
+            const onlinePaymentForm = document.getElementById('onlinePaymentForm');
+
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    paymentMethodInput.value = this.dataset.method;
+                    
+                    if (this.dataset.method === 'online') {
+                        onlinePaymentForm.classList.remove('hidden');
+                    } else {
+                        onlinePaymentForm.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Confirm payment
+            document.getElementById('confirmPayment').addEventListener('click', async function() {
+                const paymentMethod = paymentMethodInput.value;
+                if (!paymentMethod) {
+                    showPopup('Please select a payment method', true);
+                    return;
+                }
+
+                if (paymentMethod === 'online') {
+                    const cardNumber = document.getElementById('cardNumber').value;
+                    const expiryDate = document.getElementById('expiryDate').value;
+                    const cvv = document.getElementById('cvv').value;
+
+                    if (!cardNumber || !expiryDate || !cvv) {
+                        showPopup('Please fill in all card details', true);
+                        return;
+                    }
+                }
+
+                const username = localStorage.getItem('username');
+                if (!username) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                try {
+                    // Create the appointment with payment details
+                    const appointment = {
+                        service: service,
+                        date: date,
+                        time: time,
+                        amount: parseFloat(price),
+                        username: username,
+                        status: 'Pending',
+                        paymentMethod: paymentMethod,
+                        paymentStatus: paymentMethod === 'online' ? 'Paid' : 'Pending',
+                        notes: ''
+                    };
+
+                    console.log('Creating appointment:', appointment);
+
+                    const response = await fetch('/api/appointments', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(appointment)
+                    });
+
+                    if (!response.ok) {
+                        const data = await response.json();
+                        throw new Error(data.message || 'Failed to book appointment');
+                    }
+
+                    showPopup('Appointment booked successfully!');
+                    setTimeout(() => {
+                        window.location.href = '/profile.html';
+                    }, 1500);
+                } catch (error) {
+                    console.error('Error:', error);
+                    showPopup(error.message || 'An error occurred while booking the appointment', true);
+                }
+            });
+
+            // Check login status and update navbar
+            function updateNavbar() {
+                const loginLink = document.getElementById('loginLink');
+                const username = localStorage.getItem('username');
+                
+                if (username) {
+                    loginLink.href = 'profile.html';
+                    loginLink.innerHTML = '<i class="fas fa-user"></i> Profile';
+                } else {
+                    loginLink.href = 'login.html';
+                    loginLink.innerHTML = 'Login';
+                }
+            }
+
+            // Initialize navbar on page load
+            updateNavbar();
+        });
+
+        function showPopup(message, isError = false) {
+            const popup = document.getElementById('popup');
+            popup.textContent = message;
+            popup.style.display = 'block';
+            popup.classList.toggle('error', isError);
+            
+            setTimeout(() => {
+                popup.style.display = 'none';
+                popup.classList.remove('error');
+            }, 3000);
+        }
+    </script>
+</body>
+</html> 

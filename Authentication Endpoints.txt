@@ -1,0 +1,69 @@
+Authentication Endpoints:
+POST /api/admin/login
+Body (JSON):
+{
+    "username": "admin",
+    "password": "admin123"
+}
+
+POST /api/users/login
+Body (JSON):
+{
+    "username": "your_username",
+    "password": "your_password"
+}
+
+
+
+Appointment Endpoints:
+
+GET /api/appointments/user?username=your_username
+GET /api/admin/appointments
+GET /api/admin/appointments/date/{date}
+POST /api/appointments
+Body (JSON):
+{
+    "service": "Haircut",
+    "date": "2024-03-20",
+    "time": "14:30",
+    "amount": 50.00,
+    "username": "your_username",
+    "status": "Pending",
+    "paymentStatus": "Pending"
+}
+
+User Management Endpoints:
+GET /api/admin/users
+GET /api/admin/users/{userId}
+PUT /api/admin/users/{userId}
+Body (JSON):
+{
+    "username": "updated_username",
+    "email": "updated@email.com",
+    "fullName": "Updated Name",
+    "active": true
+}
+DELETE /api/admin/users/{userId}
+
+
+Service Management Endpoints:
+GET /api/admin/services
+POST /api/admin/services
+Body (JSON):
+{
+    "name": "New Service",
+    "price": 75.00,
+    "description": "Service description"
+}
+PUT /api/admin/services/{serviceId}
+DELETE /api/admin/services/{serviceId}
+
+
+For each endpoint:
+Click "New Request"
+Select the HTTP method (GET, POST, PUT, DELETE)
+Enter the URL: {{base_url}}/endpoint
+For POST/PUT requests, go to "Body" tab:
+Select "raw"
+Select "JSON"
+Enter the request body

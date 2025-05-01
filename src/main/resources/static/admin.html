@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beauty Salon - Admin Dashboard</title>
+    <link rel="icon" type="image.png" href="favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .navbar {
+            background-color: rgba(0, 0, 0);
+            backdrop-filter: blur(10px);
+        }
+        .main-content {
+            padding-top: 80px;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .error {
+            background-color: #f44336;
+        }
+        .blurred-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: url('salon-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: blur(1px);
+            opacity: 0.9;
+        }
+        .content-overlay {
+            position: relative;
+            z-index: 1;
+            background-color: rgba(255, 255, 255, 0.9);
+            min-height: 100vh;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .tab-button {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .tab-button::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #DC2626;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .tab-button.active {
+            color: #DC2626;
+        }
+        .tab-button.active::after {
+            transform: scaleX(1);
+        }
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .status-pending {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+        .status-confirmed {
+            background-color: #DBEAFE;
+            color: #1E40AF;
+        }
+        .status-completed {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+        .status-cancelled {
+            background-color: #FEE2E2;
+            color: #991B1B;
+        }
+        .appointment-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .appointment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .action-button {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .action-button:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100" style="background: url('1.jpg') center center / cover no-repeat fixed;">
+    <div style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(255,255,255,0.7);z-index:-1;"></div>
+    <div class="blurred-background"></div>
+    <div class="content-overlay">
+        <!-- Navbar -->
+        <nav class="navbar fixed top-0 left-0 right-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <h1 class="text-white text-2xl font-bold tracking-tight">Beauty Salon Admin</h1>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span id="adminName" class="text-white text-lg"></span>
+                        <button onclick="logout()" class="text-white px-4 py-2 border border-white hover:bg-white hover:text-black rounded-lg transition duration-300">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Dashboard Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600 mb-1">Total Appointments</p>
+                                <p id="totalAppointments" class="text-3xl font-bold text-red-600">0</p>
+                            </div>
+                            <div class="p-3 bg-red-100 rounded-full">
+                                <i class="fas fa-calendar text-red-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600 mb-1">Pending Appointments</p>
+                                <p id="pendingAppointments" class="text-3xl font-bold text-yellow-600">0</p>
+                            </div>
+                            <div class="p-3 bg-yellow-100 rounded-full">
+                                <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600 mb-1">Total Users</p>
+                                <p id="totalUsers" class="text-3xl font-bold text-green-600">0</p>
+                            </div>
+                            <div class="p-3 bg-green-100 rounded-full">
+                                <i class="fas fa-users text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600 mb-1">Total Revenue</p>
+                                <p id="totalRevenue" class="text-3xl font-bold text-blue-600">Rs 0</p>
+                            </div>
+                            <div class="p-3 bg-blue-100 rounded-full">
+                                <i class="fas fa-rupee-sign text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="mb-8">
+                    <div class="border-b border-gray-200">
+                        <nav class="-mb-px flex space-x-8">
+                            <button onclick="showTab('appointments')" class="tab-button active px-1 py-4 text-sm font-medium">
+                                <i class="fas fa-calendar-alt mr-2"></i>Appointments
+                            </button>
+                            <button onclick="showTab('users')" class="tab-button px-1 py-4 text-sm font-medium">
+                                <i class="fas fa-users mr-2"></i>Users
+                            </button>
+                            <button onclick="showTab('services')" class="tab-button px-1 py-4 text-sm font-medium">
+                                <i class="fas fa-spa mr-2"></i>Services
+                            </button>
+                            <button onclick="showTab('reports')" class="tab-button px-1 py-4 text-sm font-medium">
+                                <i class="fas fa-chart-bar mr-2"></i>Reports
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Appointments Tab -->
+                <div id="appointmentsTab" class="tab-content">
+                    <!-- Date Filter -->
+                    <div class="mb-8 flex items-center space-x-4">
+                        <div class="relative">
+                            <label for="dateFilter" class="block text-sm font-medium text-gray-700 mb-2">Filter by Date</label>
+                            <input type="date" id="dateFilter" class="rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
+                        </div>
+                    </div>
+
+                    <!-- Loading Indicator -->
+                    <div id="loadingIndicator" class="text-center py-8 hidden">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-red-600 border-t-transparent"></div>
+                        <p class="mt-2 text-gray-600">Loading appointments...</p>
+                    </div>
+
+                    <!-- Appointments List -->
+                    <div id="appointmentsList" class="space-y-6">
+                        <!-- Appointments will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Users Tab -->
+                <div id="usersTab" class="tab-content hidden">
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-gray-800">User Management</h3>
+                            <button class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-300">
+                                <i class="fas fa-plus mr-2"></i>Add User
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersList" class="bg-white divide-y divide-gray-200">
+                                    <!-- Users will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services Tab -->
+                <div id="servicesTab" class="tab-content hidden">
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-gray-800">Service Management</h3>
+                            <button onclick="showAddServiceModal()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-300">
+                                <i class="fas fa-plus mr-2"></i>Add New Service
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="servicesList">
+                            <!-- Services will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div id="reportsTab" class="tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-2xl shadow-lg p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Revenue Overview</h3>
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                        <div class="bg-white rounded-2xl shadow-lg p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Appointments by Service</h3>
+                            <canvas id="appointmentsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Status Update Model -->
+        <div id="statusModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Update Appointment Status</h3>
+                <select id="statusSelect" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mb-4">
+                    <option value="Pending">Pending</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                <div class="flex justify-end space-x-4">
+                    <button onclick="hideStatusModal()" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300">
+                        Cancel
+                    </button>
+                    <button onclick="updateStatus()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                        Update
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Status Update Modal -->
+        <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Update Payment Status</h3>
+                <select id="paymentSelect" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mb-4">
+                    <option value="Pending">Pending</option>
+                    <option value="Paid">Paid</option>
+                </select>
+                <div class="flex justify-end space-x-4">
+                    <button onclick="hidePaymentModal()" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300">
+                        Cancel
+                    </button>
+                    <button onclick="updatePaymentStatus()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                        Update
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popup for messages -->
+        <div id="popup" class="popup"></div>
+
+        <!-- Add Service Modal -->
+        <div id="addServiceModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Add New Service</h3>
+                <form id="addServiceForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Service Name</label>
+                        <input type="text" id="serviceName" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Price</label>
+                        <input type="number" id="servicePrice" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea id="serviceDescription" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" onclick="hideAddServiceModal()" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300">
+                            Cancel
+                        </button>
+                        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                            Add Service
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 transform transition-all">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Delete Appointment</h3>
+                    <p class="text-sm text-gray-500 mb-6">Are you sure you want to delete this appointment? This action cannot be undone.</p>
+                    <div class="flex justify-center space-x-4">
+                        <button onclick="hideDeleteModal()" 
+                                class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition duration-300">
+                            Cancel
+                        </button>
+                        <button onclick="confirmDelete()" 
+                                class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Service Modal -->
+        <div id="editServiceModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Edit Service</h3>
+                <form id="editServiceForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Service Name</label>
+                        <input type="text" id="editServiceName" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Price</label>
+                        <input type="number" id="editServicePrice" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea id="editServiceDescription" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" onclick="hideEditServiceModal()" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300">
+                            Cancel
+                        </button>
+                        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete User Confirmation Modal -->
+        <div id="deleteUserModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 transform transition-all">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Delete User</h3>
+                    <p class="text-sm text-gray-500 mb-6">Are you sure you want to delete this user? This action cannot be undone.</p>
+                    <div class="flex justify-center space-x-4">
+                        <button onclick="hideDeleteUserModal()" 
+                                class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition duration-300">
+                            Cancel
+                        </button>
+                        <button onclick="confirmDeleteUser()" 
+                                class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit User Modal -->
+        <div id="editUserModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 transform transition-all">
+                <div class="text-center">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Edit User</h3>
+                    <form id="editUserForm" class="space-y-4">
+                        <div>
+                            <label for="editUsername" class="block text-sm font-medium text-gray-700">Username</label>
+                            <input type="text" id="editUsername" name="username" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label for="editEmail" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="editEmail" name="email" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label for="editFullName" class="block text-sm font-medium text-gray-700">Full Name</label>
+                            <input type="text" id="editFullName" name="fullName" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="editActive" name="active"
+                                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="editActive" class="ml-2 block text-sm text-gray-900">Active</label>
+                        </div>
+                        <div class="flex justify-center space-x-4 mt-6">
+                            <button type="button" onclick="hideEditUserModal()" 
+                                    class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition duration-300">
+                                Cancel
+                            </button>
+                            <button type="submit" 
+                                    class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let currentAppointmentId = null;
+        const statusModal = document.getElementById('statusModal');
+        const paymentModal = document.getElementById('paymentModal');
+        const dateFilter = document.getElementById('dateFilter');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const adminName = document.getElementById('adminName');
+
+        let appointmentToDelete = null;
+        let currentServiceId = null;
+        let userToDelete = null;
+        let userToEdit = null;
+
+        // Check if admin is logged in
+        function checkLogin() {
+            const admin = localStorage.getItem('admin');
+            if (!admin) {
+                window.location.href = '/admin-login.html';
+                return;
+            }
+            try {
+                const adminData = JSON.parse(admin);
+                adminName.textContent = `Welcome, ${adminData.username}`;
+            } catch (e) {
+                console.error('Error parsing admin data:', e);
+                logout();
+            }
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('admin');
+            window.location.href = '/admin-login.html';
+        }
+
+        // Show status update modal
+        function showStatusModal(id) {
+            currentAppointmentId = id;
+            statusModal.classList.remove('hidden');
+        }
+
+        // Hide status update modal
+        function hideStatusModal() {
+            statusModal.classList.add('hidden');
+            currentAppointmentId = null;
+        }
+
+        // Show payment status update modal
+        function showPaymentModal(id) {
+            currentAppointmentId = id;
+            paymentModal.classList.remove('hidden');
+        }
+
+        // Hide payment status update modal
+        function hidePaymentModal() {
+            paymentModal.classList.add('hidden');
+            currentAppointmentId = null;
+        }
+
+        // Update appointment status
+        async function updateStatus() {
+            if (!currentAppointmentId) return;
+            
+            const status = document.getElementById('statusSelect').value;
+            try {
+                // First get the current appointment data
+                const getResponse = await fetch(`/api/admin/appointments/details/${currentAppointmentId}`);
+                const getData = await getResponse.json();
+                
+                if (!getResponse.ok) {
+                    throw new Error(getData.message || 'Failed to get appointment details');
+                }
+
+                const currentAppointment = getData.appointment;
+                console.log('Current appointment:', currentAppointment);
+
+                // Create updated appointment with new status
+                const updatedAppointment = {
+                    ...currentAppointment,
+                    status: status
+                };
+                console.log('Sending update with data:', updatedAppointment);
+
+                // Update the appointment with new status
+                const response = await fetch(`/api/admin/appointments/update/${currentAppointmentId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(updatedAppointment)
+                });
+
+                const data = await response.json();
+                console.log('Update response:', data);
+                
+                if (response.ok) {
+                    showPopup('Status updated successfully');
+                    hideStatusModal();
+                    loadAppointments();
+                } else {
+                    showPopup(data.message || 'Failed to update status', true);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showPopup('Failed to update status', true);
+            }
+        }
+
+        // Update payment status
+        async function updatePaymentStatus() {
+            if (!currentAppointmentId) return;
+            
+            const paymentStatus = document.getElementById('paymentSelect').value;
+            try {
+                // First get the current appointment data
+                const getResponse = await fetch(`/api/admin/appointments/details/${currentAppointmentId}`);
+                const getData = await getResponse.json();
+                
+                if (!getResponse.ok) {
+                    throw new Error(getData.message || 'Failed to get appointment details');
+                }
+
+                const currentAppointment = getData.appointment;
+                console.log('Current appointment:', currentAppointment);
+
+                // Create updated appointment with new payment status
+                const updatedAppointment = {
+                    ...currentAppointment,
+                    paymentStatus: paymentStatus
+                };
+                console.log('Sending update with data:', updatedAppointment);
+
+                // Update the appointment with new payment status
+                const response = await fetch(`/api/admin/appointments/update/${currentAppointmentId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(updatedAppointment)
+                });
+
+                const data = await response.json();
+                console.log('Update response:', data);
+                
+                if (response.ok) {
+                    showPopup('Payment status updated successfully');
+                    hidePaymentModal();
+                    loadAppointments();
+                } else {
+                    showPopup(data.message || 'Failed to update payment status', true);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showPopup('Failed to update payment status', true);
+            }
+        }
+
+        // Quick Sort implementation for appointments
+        function quickSort(appointments, left = 0, right = appointments.length - 1) {
+            if (left < right) {
+                const pivotIndex = partition(appointments, left, right);
+                quickSort(appointments, left, pivotIndex - 1);
+                quickSort(appointments, pivotIndex + 1, right);
+            }
+            return appointments;
+        }
+
+        function partition(appointments, left, right) {
+            const pivot = appointments[right];
+            let i = left - 1;
+
+            for (let j = left; j < right; j++) {
+                // Compare both date and time
+                const currentDate = new Date(appointments[j].date + 'T' + appointments[j].time);
+                const pivotDate = new Date(pivot.date + 'T' + pivot.time);
+                
+                if (currentDate < pivotDate) {
+                    i++;
+                    [appointments[i], appointments[j]] = [appointments[j], appointments[i]];
+                }
+            }
+
+            [appointments[i + 1], appointments[right]] = [appointments[right], appointments[i + 1]];
+            return i + 1;
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, initializing...');
+            checkLogin();
+            loadAppointments();
+            showTab('appointments');
+
+            // Add date filter event listener
+            dateFilter.addEventListener('change', function(e) {
+                console.log('Date filter changed:', e.target.value);
+                loadAppointments();
+            });
+        });
+
+        // Load appointments with sorting
+        async function loadAppointments() {
+            console.log('loadAppointments function called');
+            loadingIndicator.classList.remove('hidden');
+            const appointmentsList = document.getElementById('appointmentsList');
+            appointmentsList.innerHTML = '';
+
+            try {
+                let url = '/api/admin/appointments';
+                const date = dateFilter.value;
+                console.log('Current date filter value:', date);
+                
+                if (date) {
+                    // Ensure the date is in YYYY-MM-DD format
+                    const formattedDate = date; // The date input already provides YYYY-MM-DD format
+                    console.log('Filtering by date:', formattedDate);
+                    url += `/date/${formattedDate}`;
+                }
+
+                console.log('Fetching appointments from:', url);
+                const response = await fetch(url);
+                console.log('Response status:', response.status);
+                const responseText = await response.text();
+                console.log('Raw response:', responseText);
+                
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                    console.log('Parsed response data:', data);
+                } catch (e) {
+                    console.error('Error parsing response:', e);
+                    throw new Error('Invalid response from server');
+                }
+
+                if (response.ok && data.status === 'success') {
+                    const appointments = data.appointments;
+                    console.log('Received appointments:', appointments);
+                    
+                    // Sort appointments by date and time
+                    const sortedAppointments = quickSort([...appointments]);
+                    console.log('Sorted appointments:', sortedAppointments);
+                    
+                    // Update dashboard stats
+                    document.getElementById('totalAppointments').textContent = appointments.length;
+                    document.getElementById('pendingAppointments').textContent = 
+                        appointments.filter(a => a.status === 'Pending').length;
+
+                    // Load total users
+                    const usersResponse = await fetch('/api/admin/users');
+                    const usersData = await usersResponse.json();
+                    if (usersData.status === 'success') {
+                        document.getElementById('totalUsers').textContent = usersData.users.length;
+                    }
+
+                    // Calculate total revenue from paid appointments
+                    const totalRevenue = appointments
+                        .filter(a => a.paymentStatus === 'Paid')
+                        .reduce((sum, a) => sum + a.amount, 0);
+                    document.getElementById('totalRevenue').textContent = 
+                        'Rs ' + totalRevenue.toFixed(2);
+
+                    if (sortedAppointments.length === 0) {
+                        console.log('No appointments found for the selected date');
+                        appointmentsList.innerHTML = `
+                            <div class="text-center py-8 text-gray-500">
+                                No appointments found for the selected date
+                            </div>
+                        `;
+                    } else {
+                        console.log('Rendering appointment cards');
+                        appointmentsList.innerHTML = ''; // Clear the list first
+                        const appointmentsHTML = sortedAppointments.map(appointment => createAppointmentCard(appointment)).join('');
+                        appointmentsList.innerHTML = appointmentsHTML;
+                    }
+                } else {
+                    console.error('Error in response:', data);
+                    throw new Error(data.message || 'Failed to load appointments');
+                }
+            } catch (error) {
+                console.error('Error in loadAppointments:', error);
+                showPopup('Failed to load appointments', true);
+                appointmentsList.innerHTML = `
+                    <div class="text-center py-8">
+                        <p class="text-red-600 text-lg">Failed to load appointments. Please try again.</p>
+                        <button onclick="loadAppointments()" class="mt-4 bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition duration-300">
+                            Retry
+                        </button>
+                    </div>
+                `;
+            } finally {
+                loadingIndicator.classList.add('hidden');
+            }
+        }
+
+        // Create appointment card
+        function createAppointmentCard(appointment) {
+            // Ensure all required fields have default values if they're undefined
+            const {
+                id = '',
+                service = 'Unknown Service',
+                date = 'No Date',
+                time = 'No Time',
+                username = 'Unknown User',
+                amount = 0,
+                status = 'Pending',
+                paymentStatus = 'Pending'
+            } = appointment;
+
+            // Format the date to be more readable
+            const formattedDate = new Date(date).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            return `
+                <div class="appointment-card">
+                    <div class="flex justify-between items-start">
+                        <div class="space-y-3 flex-grow">
+                            <div>
+                                <div class="flex items-baseline gap-3">
+                                    <h3 class="text-xl font-bold text-gray-800">${service}</h3>
+                                    <div class="px-3 py-1 bg-red-50 rounded-full">
+                                        <span class="text-red-600 font-semibold">Rs ${amount}</span>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <p class="text-gray-500 flex items-center">
+                                        <i class="far fa-calendar-alt mr-2"></i>
+                                        ${formattedDate} at ${time}
+                                    </p>
+                                    <p class="text-gray-500 mt-1">
+                                        <i class="far fa-user mr-2"></i>
+                                        <strong>Customer:</strong> ${username}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <span class="status-badge ${getStatusClass(status)}">${status}</span>
+                                <span class="status-badge ${getPaymentClass(paymentStatus)}">${paymentStatus}</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="editAppointment('${id}')" 
+                                    class="action-button bg-indigo-600 text-white hover:bg-indigo-700">
+                                <i class="fas fa-edit mr-1"></i>Edit
+                            </button>
+                            <button onclick="showStatusModal('${id}')" 
+                                    class="action-button bg-blue-600 text-white hover:bg-blue-700">
+                                <i class="fas fa-edit mr-1"></i>Status
+                            </button>
+                            <button onclick="showPaymentModal('${id}')"
+                                    class="action-button bg-green-600 text-white hover:bg-green-700">
+                                <i class="fas fa-money-bill mr-1"></i>Payment
+                            </button>
+                            <button onclick="showDeleteModal('${id}')"
+                                    class="action-button bg-red-600 text-white hover:bg-red-700">
+                                <i class="fas fa-trash-alt mr-1"></i>Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'Pending': return 'status-pending';
+                case 'Confirmed': return 'status-confirmed';
+                case 'Completed': return 'status-completed';
+                case 'Cancelled': return 'status-cancelled';
+                default: return 'status-pending';
+            }
+        }
+
+        function getPaymentClass(status) {
+            return status === 'Paid' ? 'status-completed' : 'status-pending';
+        }
+
+        function showPopup(message, isError = false) {
+            const popup = document.getElementById('popup');
+            popup.textContent = message;
+            popup.style.display = 'block';
+            popup.classList.toggle('error', isError);
+            
+            setTimeout(() => {
+                popup.style.display = 'none';
+                popup.classList.remove('error');
+            }, 3000);
+        }
+
+        // Tab Management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Load tab content
+            if (tabName === 'users') {
+                loadUsers();
+            } else if (tabName === 'services') {
+                loadServices();
+            } else if (tabName === 'reports') {
+                loadReports();
+            }
+        }
+
+        // User Management
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/admin/users');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const usersList = document.getElementById('usersList');
+                    usersList.innerHTML = data.users.map(user => {
+                        console.log('Rendering user:', user); // Debug log
+                        return `
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">${user.username}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">${user.email}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button onclick="showEditUserModal(${user.id})" class="text-indigo-600 hover:text-indigo-900 mr-4">
+                                        Edit
+                                    </button>
+                                    <button onclick="deleteUser(${user.id})" class="text-red-600 hover:text-red-900">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showPopup('Failed to load users', true);
+            }
+        }
+
+        async function deleteUser(userId) {
+            console.log('Attempting to delete user with ID:', userId);
+            showDeleteUserModal(userId);
+        }
+
+        // Show delete user confirmation modal
+        function showDeleteUserModal(userId) {
+            userToDelete = userId;
+            const modal = document.getElementById('deleteUserModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('animate-fade-in');
+        }
+
+        // Hide delete user confirmation modal
+        function hideDeleteUserModal() {
+            const modal = document.getElementById('deleteUserModal');
+            modal.classList.add('hidden');
+            userToDelete = null;
+        }
+
+        // Confirm delete user action
+        async function confirmDeleteUser() {
+            if (!userToDelete) {
+                console.error('No user ID to delete');
+                return;
+            }
+
+            console.log('Confirming deletion of user:', userToDelete);
+
+            try {
+                const response = await fetch(`/api/admin/users/${userToDelete}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                console.log('Delete response:', data);
+
+                if (response.ok) {
+                    showPopup('User deleted successfully');
+                    hideDeleteUserModal();
+                    loadUsers();
+                } else {
+                    showPopup(data.message || 'Failed to delete user', true);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showPopup('Failed to delete user', true);
+            }
+        }
+
+        // Show edit user modal
+        function showEditUserModal(userId) {
+            userToEdit = userId;
+            const modal = document.getElementById('editUserModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('animate-fade-in');
+
+            // Fetch user details and populate form
+            fetch(`/api/admin/users/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const user = data.user;
+                        document.getElementById('editUsername').value = user.username;
+                        document.getElementById('editEmail').value = user.email;
+                        document.getElementById('editFullName').value = user.fullName;
+                        document.getElementById('editActive').checked = user.active;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching user details:', error);
+                    showPopup('Failed to load user details', true);
+                });
+        }
+
+        // Hide edit user modal
+        function hideEditUserModal() {
+            const modal = document.getElementById('editUserModal');
+            modal.classList.add('hidden');
+            userToEdit = null;
+            document.getElementById('editUserForm').reset();
+        }
+
+        // Handle edit user form submission
+        document.getElementById('editUserForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!userToEdit) {
+                showPopup('No user selected for editing', true);
+                return;
+            }
+
+            const updatedUser = {
+                username: document.getElementById('editUsername').value,
+                email: document.getElementById('editEmail').value,
+                fullName: document.getElementById('editFullName').value,
+                active: document.getElementById('editActive').checked
+            };
+
+            try {
+                const response = await fetch(`/api/admin/users/${userToEdit}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedUser)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showPopup('User updated successfully');
+                    hideEditUserModal();
+                    loadUsers();
+                } else {
+                    showPopup(data.message || 'Failed to update user', true);
+                }
+            } catch (error) {
+                console.error('Error updating user:', error);
+                showPopup('Failed to update user', true);
+            }
+        });
+
+        // Service Management
+        function showAddServiceModal() {
+            document.getElementById('addServiceModal').classList.remove('hidden');
+        }
+
+        function hideAddServiceModal() {
+            document.getElementById('addServiceModal').classList.add('hidden');
+            document.getElementById('addServiceForm').reset();
+        }
+
+        // Add service form submission
+        document.getElementById('addServiceForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const service = {
+                name: document.getElementById('serviceName').value,
+                price: parseFloat(document.getElementById('servicePrice').value),
+                description: document.getElementById('serviceDescription').value
+            };
+
+            try {
+                const response = await fetch('/api/admin/services', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(service)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showPopup('Service added successfully');
+                    hideAddServiceModal();
+                    loadServices(); // Reload the services list
+                } else {
+                    showPopup(data.message || 'Failed to add service', true);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showPopup('Failed to add service', true);
+            }
+        });
+
+        async function loadServices() {
+            try {
+                const response = await fetch('/api/admin/services');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const servicesList = document.getElementById('servicesList');
+                    servicesList.innerHTML = data.services.map(service => `
+                        <div class="bg-white border rounded-lg p-4">
+                            <h4 class="text-lg font-semibold">${service.name}</h4>
+                            <p class="text-gray-600">Rs ${service.price}</p>
+                            <div class="mt-4 flex justify-end space-x-2">
+                                <button onclick="showEditServiceModal('${service.id}')" class="text-indigo-600 hover:text-indigo-900">
+                                    Edit
+                                </button>
+                                <button onclick="deleteService('${service.id}')" class="text-red-600 hover:text-red-900">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading services:', error);
+                showPopup('Failed to load services', true);
+            }
+        }
+
+        async function deleteService(serviceId) {
+            if (!confirm('Are you sure you want to delete this service?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/services/${serviceId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showPopup('Service deleted successfully');
+                    loadServices(); // Reload the services list
+                } else {
+                    showPopup(data.message || 'Failed to delete service', true);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showPopup('Failed to delete service', true);
+            }
+        }
+
+        // Reports
+        async function loadReports() {
+            try {
+                const response = await fetch('/api/admin/reports');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Revenue Chart
+                    new Chart(document.getElementById('revenueChart'), {
+                        type: 'line',
+                        data: {
+                            labels: data.revenue.labels,
+                            datasets: [{
+                                label: 'Revenue',
+                                data: data.revenue.data,
+                                borderColor: 'rgb(79, 70, 229)',
+                                tension: 0.1
+                            }]
+                        }
+                    });
+
+                    // Appointments Chart
+                    new Chart(document.getElementById('appointmentsChart'), {
+                        type: 'pie',
+                        data: {
+                            labels: data.appointments.labels,
+                            datasets: [{
+                                data: data.appointments.data,
+                                backgroundColor: [
+                                    'rgb(79, 70, 229)',
+                                    'rgb(16, 185, 129)',
+                                    'rgb(245, 158, 11)',
+                                    'rgb(239, 68, 68)'
+                                ]
+                            }]
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading reports:', error);
+                showPopup('Failed to load reports', true);
+            }
+        }
+
+        // Edit appointment
+        async function editAppointment(appointmentId) {
+            console.log('Editing appointment:', appointmentId);
+            try {
+                // First, get all appointments to verify the ID exists
+                const allAppointmentsResponse = await fetch('/api/admin/appointments');
+                const allAppointmentsData = await allAppointmentsResponse.json();
+                console.log('All appointments:', allAppointmentsData);
+
+                if (allAppointmentsData.status === 'success') {
+                    const appointmentExists = allAppointmentsData.appointments.some(a => a.id === appointmentId);
+                    console.log('Appointment exists:', appointmentExists);
+
+                    if (!appointmentExists) {
+                        showPopup('Appointment not found', true);
+                        return;
+                    }
+                }
+
+                // Now get the specific appointment
+                const response = await fetch(`/api/admin/appointments/details/${appointmentId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('Response status:', response.status);
+                const responseText = await response.text();
+                console.log('Raw response:', responseText);
+                
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    console.error('Error parsing response:', e);
+                    showPopup('Invalid response from server', true);
+                    return;
+                }
+                
+                console.log('Parsed appointment data:', data);
+                
+                if (data.status === 'success' && data.appointment) {
+                    const appointment = data.appointment;
+                    showEditAppointmentModal(appointment);
+                } else {
+                    showPopup(data.message || 'Failed to load appointment details', true);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showPopup('Failed to load appointment details', true);
+            }
+        }
+
+        // Show delete confirmation modal
+        function showDeleteModal(appointmentId) {
+            console.log('Showing delete modal for appointment:', appointmentId);
+            appointmentToDelete = appointmentId;
+            const modal = document.getElementById('deleteModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('animate-fade-in');
+        }
+
+        // Hide delete confirmation modal
+        function hideDeleteModal() {
+            const modal = document.getElementById('deleteModal');
+            modal.classList.add('hidden');
+            appointmentToDelete = null;
+        }
+
+        // Confirm delete action
+        async function confirmDelete() {
+            if (!appointmentToDelete) {
+                console.error('No appointment ID to delete');
+                return;
+            }
+
+            console.log('Confirming deletion of appointment:', appointmentToDelete);
+
+            try {
+                const response = await fetch(`/api/admin/appointments/delete/${appointmentToDelete}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                console.log('Delete response:', data);
+
+                if (response.ok) {
+                    showPopup('Appointment deleted successfully');
+                    hideDeleteModal();
+                    loadAppointments();
+                } else {
+                    showPopup(data.message || 'Failed to delete appointment', true);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showPopup('Failed to delete appointment', true);
+            }
+        }
+
+        // Update delete appointment function to use the modal
+        async function deleteAppointment(appointmentId) {
+            console.log('Delete appointment called for ID:', appointmentId);
+            showDeleteModal(appointmentId);
+        }
+
+        // Edit Appointment Modal
+        function showEditAppointmentModal(appointment) {
+            console.log('Showing edit modal for appointment:', appointment);
+            const modal = document.createElement('div');
+            modal.id = 'editAppointmentModal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Edit Appointment</h3>
+                    <form id="editAppointmentForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Service</label>
+                            <input type="text" id="editService" value="${appointment.service}" 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Date</label>
+                            <input type="date" id="editDate" value="${appointment.date}" 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Time</label>
+                            <input type="time" id="editTime" value="${appointment.time}" 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Amount</label>
+                            <input type="number" step="0.01" id="editAmount" value="${appointment.amount}" 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Notes</label>
+                            <textarea id="editNotes" 
+                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">${appointment.notes || ''}</textarea>
+                        </div>
+                        <div class="flex justify-end space-x-4">
+                            <button type="button" onclick="hideEditAppointmentModal()" 
+                                    class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300">
+                                Cancel
+                            </button>
+                            <button type="submit" 
+                                    class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            // Add form submission handler
+            document.getElementById('editAppointmentForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                console.log('Form submitted for appointment:', appointment.id);
+                
+                const updatedAppointment = {
+                    id: appointment.id,
+                    service: document.getElementById('editService').value,
+                    date: document.getElementById('editDate').value,
+                    time: document.getElementById('editTime').value,
+                    amount: parseFloat(document.getElementById('editAmount').value),
+                    notes: document.getElementById('editNotes').value,
+                    username: appointment.username,
+                    status: appointment.status,
+                    paymentStatus: appointment.paymentStatus,
+                    paymentMethod: appointment.paymentMethod
+                };
+
+                console.log('Updated appointment data:', updatedAppointment);
+
+                try {
+                    const response = await fetch(`/api/admin/appointments/update/${appointment.id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(updatedAppointment)
+                    });
+
+                    const data = await response.json();
+                    console.log('Update response:', data);
+
+                    if (response.ok) {
+                        showPopup('Appointment updated successfully');
+                        hideEditAppointmentModal();
+                        loadAppointments();
+                    } else {
+                        showPopup(data.message || 'Failed to update appointment', true);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showPopup('Failed to update appointment', true);
+                }
+            });
+        }
+
+        function hideEditAppointmentModal() {
+            const modal = document.getElementById('editAppointmentModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Show edit service modal
+        function showEditServiceModal(serviceId) {
+            currentServiceId = serviceId;
+            const modal = document.getElementById('editServiceModal');
+            modal.classList.remove('hidden');
+
+            // Load service details
+            fetch(`/api/admin/services/${serviceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const service = data.service;
+                        document.getElementById('editServiceName').value = service.name;
+                        document.getElementById('editServicePrice').value = service.price;
+                        document.getElementById('editServiceDescription').value = service.description;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showPopup('Failed to load service details', true);
+                });
+        }
+
+        // Hide edit service modal
+        function hideEditServiceModal() {
+            const modal = document.getElementById('editServiceModal');
+            modal.classList.add('hidden');
+            currentServiceId = null;
+        }
+
+        // Handle edit service form submission
+        document.getElementById('editServiceForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!currentServiceId) return;
+
+            const updatedService = {
+                name: document.getElementById('editServiceName').value,
+                price: parseFloat(document.getElementById('editServicePrice').value),
+                description: document.getElementById('editServiceDescription').value
+            };
+
+            try {
+                const response = await fetch(`/api/admin/services/${currentServiceId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedService)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showPopup('Service updated successfully');
+                    hideEditServiceModal();
+                    loadServices();
+                } else {
+                    showPopup(data.message || 'Failed to update service', true);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showPopup('Failed to update service', true);
+            }
+        });
+
+        // Add animation styles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: scale(0.95); }
+                to { opacity: 1; transform: scale(1); }
+            }
+            .animate-fade-in {
+                animation: fadeIn 0.2s ease-out;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html> 

@@ -1,0 +1,8 @@
+[ {
+  "id" : "1",
+  "username" : "admin",
+  "password" : "admin123",
+  "email" : "admin@salon.com",
+  "role" : "super_admin",
+  "active" : true
+} ]

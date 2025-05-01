@@ -1,0 +1,78 @@
+[ {
+  "id" : "0c59a6a5-d81e-4f12-961f-61cf0cd41cfb",
+  "username" : "rupika",
+  "date" : "2025-04-30",
+  "time" : "13:00",
+  "service" : "Hair Styling",
+  "status" : "Confirmed",
+  "paymentStatus" : "Paid",
+  "paymentMethod" : "cash",
+  "amount" : 3000.0,
+  "notes" : ""
+}, {
+  "id" : "cd3fa4d2-d723-4ec1-ac0d-0172dcd019c7",
+  "username" : "admin",
+  "date" : "2025-04-30",
+  "time" : "14:00",
+  "service" : "Hair Styling",
+  "status" : "Completed",
+  "paymentStatus" : "Paid",
+  "paymentMethod" : "cash",
+  "amount" : 30.0,
+  "notes" : ""
+}, {
+  "id" : "59af5723-5aca-428e-ad32-5597a5e56df6",
+  "username" : "abdhullah",
+  "date" : "2025-05-02",
+  "time" : "15:00",
+  "service" : "Makeup Application",
+  "status" : "Pending",
+  "paymentStatus" : "Pending",
+  "paymentMethod" : "cash",
+  "amount" : 40.0,
+  "notes" : ""
+}, {
+  "id" : "f2697934-9e95-451c-a4dc-029887dc4108",
+  "username" : "abdhullah",
+  "date" : "2025-04-30",
+  "time" : "15:00",
+  "service" : "Makeup Application",
+  "status" : "Pending",
+  "paymentStatus" : "Paid",
+  "paymentMethod" : "cash",
+  "amount" : 40.0,
+  "notes" : ""
+}, {
+  "id" : "ef8f5d90-a0db-47b9-93a9-5f42694a0b91",
+  "username" : "admin",
+  "date" : "2025-05-07",
+  "time" : "14:00",
+  "service" : "test 2",
+  "status" : "Pending",
+  "paymentStatus" : "Pending",
+  "paymentMethod" : "cash",
+  "amount" : 33.0,
+  "notes" : ""
+}, {
+  "id" : "2a4f5e55-b849-4f18-af48-e5c37ff1f936",
+  "username" : "admin",
+  "date" : "2025-04-30",
+  "time" : "13:00",
+  "service" : "Hair Coloring",
+  "status" : "Confirmed",
+  "paymentStatus" : "Paid",
+  "paymentMethod" : "cash",
+  "amount" : 65.0,
+  "notes" : ""
+}, {
+  "id" : "6d13dd2a-3a8d-4e95-8f69-4b6310212383",
+  "username" : "thulya",
+  "date" : "2025-05-01",
+  "time" : "15:00",
+  "service" : "makeup",
+  "status" : "Pending",
+  "paymentStatus" : "Paid",
+  "paymentMethod" : "online",
+  "amount" : 40000.0,
+  "notes" : ""
+} ]

@@ -1,0 +1,37 @@
+[ {
+  "id" : 1745842626998,
+  "username" : "admin",
+  "password" : "$2a$10$whyxqA6iSnF5VbJot.heju5LhqrLr7fnJko9XIKpgc8luBSAfeQse",
+  "email" : "test@gmail.com",
+  "fullName" : "Thavisha Dewmith Wimalarathne",
+  "active" : true
+}, {
+  "id" : 1745878474782,
+  "username" : "aadi",
+  "password" : "$2a$10$7ZUIXHvOVvMv8zcgxWYcUe02kRxswjDYR68gn1UResV5D15YbcCQ.",
+  "email" : "aadilaanees@gmail.com",
+  "fullName" : "aadila",
+  "active" : false
+}, {
+  "id" : 1745894722768,
+  "username" : "rupika",
+
+  "password" : "$2a$10$eiO3vMQ1dmc82m08Tst.NubpstermM9Ivd9NtAbLlZ3lLuBEuXXXm",
+  "email" : "rvijitha36@gmail.com",
+  "fullName" : "Rupika Wijesinghe",
+  "active" : false
+}, {
+  "id" : 1745899135223,
+  "username" : "abdhullah",
+  "password" : "$2a$10$1cLalhu7Xju2dREdYrefUe0IXvz45du9ESMwy3MsHhXcZ/1suqXBK",
+  "email" : "abdhullah@gmail.com",
+  "fullName" : "Abdhullah",
+  "active" : false
+}, {
+  "id" : 1745925896947,
+  "username" : "thulya",
+  "password" : "$2a$10$tiqfM5.IBt4IRg9nkie4zuq7YrdrK6UICmi4NYccbb8woMqRu9nzi",
+  "email" : "thulya@gmail.com",
+  "fullName" : "thulya",
+  "active" : false
+} ]

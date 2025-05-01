@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beauty Salon - Login</title>
+    <link rel="icon" type="image.png" href="favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background-color: rgb(0, 0, 0);
+            backdrop-filter: blur(5px);
+        }
+        .main-content {
+            padding-top: 80px;
+        }
+        .blurred-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: url('salon-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: blur(1px);
+            opacity: 0.9;
+        }
+        .content-overlay {
+            position: relative;
+            z-index: 1;
+            background-color: rgba(255, 255, 255, 0.9);
+            min-height: 100vh;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .error {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+<body class="bg-gray-100" style="background: url('1.jpg') center center / cover no-repeat fixed;">
+    <div style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(255,255,255,0.7);z-index:-1;"></div>
+    <div class="blurred-background"></div>
+    <div class="content-overlay">
+        <!-- Navbar -->
+        <nav class="navbar p-4">
+            <div class="container mx-auto flex justify-between items-center">
+                <a href="index.html" class="text-white text-xl font-semibold">Beauty Salon</a>
+                <div class="space-x-4">
+                    <a href="index.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Home</a>
+                    <a href="service.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Services</a>
+                    <a href="reviews.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Reviews</a>
+                    <a href="booking.html" class="text-white px-4 py-2 border-2 border-white hover:bg-white hover:text-black rounded-lg transition duration-300">BOOK NOW</a>
+                    <a href="login.html" class="text-white px-4 py-2 border-2 border-white hover:bg-white hover:text-black rounded-lg transition duration-300">Login</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content container mx-auto p-8">
+            <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Login</h1>
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                        <input type="text" id="username" name="username" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="password" name="password" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <button type="submit"
+                            class="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition duration-300">
+                        Login
+                    </button>
+                </form>
+                <p class="mt-4 text-center text-gray-600">
+                    Don't have an account? <a href="signup.html" class="text-blue-600 hover:underline">Sign up</a>
+                </p>
+                <p class="mt-2 text-center text-gray-600">
+                    <a href="admin-login.html" class="text-blue-600 hover:underline">Staff Login</a>
+                </p>
+            </div>
+        </main>
+
+        <!-- Popup for messages -->
+        <div id="popup" class="popup"></div>
+    </div>
+
+    <script>
+        function showPopup(message, isError = false) {
+            const popup = document.getElementById('popup');
+            popup.textContent = message;
+            popup.style.display = 'block';
+            popup.classList.toggle('error', isError);
+            
+            setTimeout(() => {
+                popup.style.display = 'none';
+                popup.classList.remove('error');
+            }, 3000);
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/users/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    // Store user data in localStorage
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('token', data.token);
+                    
+                    showPopup('Login successful! Redirecting...');
+                    
+                    // Redirect to profile page after a short delay
+                    setTimeout(() => {
+                        window.location.href = 'profile.html';
+                    }, 1500);
+                } else {
+                    throw new Error(data.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showPopup(error.message || 'Invalid username or password', true);
+            }
+        });
+
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const username = localStorage.getItem('username');
+            if (username) {
+                window.location.href = 'profile.html';
+            }
+        });
+    </script>
+</body>
+</html>

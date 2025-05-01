@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beauty Salon - Home</title>
+    <link rel="icon" type="image.png" href="favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 5s ease-out forwards;
+        }
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 30%;
+        }
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            flex: 1;
+            margin-bottom: 120px;
+        }
+        .first-page {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .content-below-video {
+            background: white;
+            min-height: 100vh;
+            padding-top: 2rem;
+        }
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background-color: rgba(0, 0, 0);
+            backdrop-filter: blur(50px);
+            padding: 1rem 0;
+            height: 5rem;
+        }
+        .nav-links {
+            margin-left: auto;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .main-content {
+            padding-top: 80px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="video-container">
+        <video autoplay loop muted>
+            <source src="salon3.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div class="content-wrapper">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between h-full">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-white text-xl font-bold">Beauty Salon</h1>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="/" class="text-white hover:text-red-500 px-5 py-3 rounded-md text-sm font-medium">Home</a>
+                            <a href="/service.html" class="text-white hover:text-red-500 px-5 py-3 rounded-md text-sm font-medium">Services</a>
+                            <a href="/book.html" class="text-white hover:text-red-500 px-5 py-3 rounded-md text-sm font-medium">Book Now</a>
+                            <a href="/reviews.html" class="text-white hover:text-red-500 px-5 py-3 rounded-md text-sm font-medium">Reviews</a>
+                            <div id="userSection" class="hidden">
+                                <a href="/profile.html" class="text-white px-4 py-3 border-2 border-white hover:bg-white hover:text-black rounded-lg transition duration-300 mr-4">
+                                    <i class="fas fa-user mr-2"></i>Profile
+                                </a>
+                                <button onclick="logout()" class="text-white hover:text-gray-300 px-5 py-3 rounded-md text-sm font-medium">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                </button>
+                            </div>
+                            <div id="loginSection">
+                                <a href="/login.html" class="text-white px-4 py-3 border-2 border-white hover:bg-white hover:text-black rounded-lg transition duration-300">
+                                    <i class="fas fa-sign-in-alt mr-2"></i>Login
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- First Page Content -->
+        <div class="first-page">
+            <main class="main-content container mx-auto p-8 mt-32">
+                <div class="max-w-2xl">
+                    <h1 class="text-7xl font-extrabold text-white text-left mb-4 drop-shadow-2xl animate-fadeIn">Experience the Elegance of Test<br> Salon</h1>
+                    <p class="text-2xl text-white text-left mb-8 drop-shadow-2xl font-bold animate-fadeIn">Where expert meets Luxurious Services for a <br>Transformative Beauty Experience.</p>
+                </div>
+            </main>
+        </div>
+
+        <!-- Content Below Video -->
+        <div class="content-below-video">
+            <!-- Services Section -->
+            <div class="container mx-auto px-4 py-16">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-12" data-aos="fade-right" data-aos-duration="1000">
+                    <div class="md:w-1/2">
+                        <img src= "1.jpg" alt="Our Services" class="w-full h-auto rounded-lg shadow-2xl">
+                    </div>
+                    <div class="md:w-1/2">
+                        <h2 class="text-5xl font-bold text-black mb-6">Our Services</h2>
+                        <p class="text-gray-700 text-lg leading-relaxed">
+                            We offer a comprehensive range of beauty treatments designed to meet all your needs and exceed your expectations. Our expert team is dedicated to providing you with an exceptional experience, using the latest techniques and top-quality products. Whether you're looking for a refreshing new look or a relaxing retreat, we have the perfect solution to enhance your natural beauty and boost your confidence. Experience the epitome of beauty at Liyo Salon, where your satisfaction is our top priority.
+                        </p>
+                        <a href="/service.html" class="inline-block mt-8 px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition duration-300">
+                            Explore Our Services
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div class="container mx-auto px-4 py-16">
+                <div class="flex flex-col md:flex-row-reverse items-center justify-between gap-12" data-aos="fade-left" data-aos-duration="1000">
+                    <div class="md:w-1/2">
+                        <img src="2.jpg" alt="Color Blocking Collection" class="w-full h-auto rounded-lg shadow-2xl">
+                    </div>
+                    <div class="md:w-1/2">
+                        <h2 class="text-5xl font-bold text-black mb-6">Our Products</h2>
+                        <p class="text-gray-700 text-lg leading-relaxed">
+                            Discover the finest selection of beauty products at Liyo Salon, carefully curated to ensure you achieve salon-quality results at home. Our range includes top-tier brands and exclusive items that cater to all your hair, skin, and beauty needs. Each product is chosen for its superior quality and effectiveness, helping you maintain and enhance your natural beauty between visits.
+                        </p>
+                        <a href="/products.html" class="inline-block mt-8 px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition duration-300">
+                            View Our Products
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-black text-white pt-12 pb-4 mt-auto">
+            <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-12 md:gap-0">
+                <!-- Logo & Social -->
+                <div class="flex-1 flex flex-col items-start mb-8 md:mb-0">
+                    <div class="mb-4">
+                        <span class="block text-6xl font-extrabold tracking-widest leading-none">Test</span>
+                        <span class="block text-xs tracking-widest mt-1" style="letter-spacing:0.3em;">SALON</span>
+                        <span class="block text-xs tracking-widest text-red-600 font-bold">HAIR & BEAUTY <span class="text-white"></span></span>
+                    </div>
+                    <div class="flex space-x-4 mt-4">
+                        <!-- Facebook -->
+                        <a href="www.facebook.com" class="text-white hover:text-red-600" aria-label="Facebook">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.522-4.477-10-10-10S2 6.478 2 12c0 4.991 3.657 9.128 8.438 9.877v-6.987h-2.54v-2.89h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.242 0-1.632.771-1.632 1.562v1.875h2.773l-.443 2.89h-2.33v6.987C18.343 21.128 22 16.991 22 12z"/></svg>
+                        </a>
+                        <!-- Instagram -->
+                        <a href="instagram.com" class="text-white hover:text-red-600" aria-label="Instagram">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5zm4.25 2.25a5.25 5.25 0 1 1 0 10.5 5.25 5.25 0 0 1 0-10.5zm0 1.5a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5zm5.25 1.25a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+                        </a>
+                        <!-- TikTok -->
+                        <a href="wwww.tiktok.com" class="text-white hover:text-red-600" aria-label="TikTok">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.75 2h2.25v7.25c0 2.623 2.127 4.75 4.75 4.75v2.25c-2.623 0-4.75-2.127-4.75-4.75V2zm-2.25 4.75A5.25 5.25 0 0 1 15.75 12v2.25A7.5 7.5 0 1 1 8.25 6.75h2.25z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <!-- Quick Links -->
+                <div class="flex-1 mb-8 md:mb-0">
+                    <h3 class="text-red-600 font-bold mb-4">QUICK LINKS</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="hover:underline">HOME</a></li>
+                        <li><a href="about.html" class="hover:underline">ABOUT</a></li>
+                        <li><a href="terms.html" class="hover:underline">TERMS & CONDITIONS</a></li>
+                        <li><a href="contact.html" class="hover:underline">CONTACT</a></li>
+                    </ul>
+                </div>
+                <!-- Contact Us -->
+                <div class="flex-1">
+                    <h3 class="text-red-600 font-bold mb-4">CONTACT US</h3>
+                    <div class="mb-4 flex items-start">
+                        <svg class="w-5 h-5 text-red-600 mt-1 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0-6C6.48 2 2 6.48 2 12c0 5.52 4.48 10 10 10s10-4.48 10-10C22 6.48 17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                        <div>
+                            <span class="text-gray-400 text-xs">OPENING TIMES</span><br>
+                            <span class="font-bold">Tuesday - Sunday: 9:00am - 7:00pm</span>
+                        </div>
+                    </div>
+                    <div class="mb-4 flex items-start">
+                        <svg class="w-5 h-5 text-red-600 mt-1 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                        <div>
+                            <span class="text-gray-400 text-xs">OUR LOCATION</span><br>
+                            <span class="font-bold">SLIIT Metro Sri Lanka.</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-red-600 mt-1 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.11-.21c1.21.49 2.53.76 3.88.76a1 1 0 0 1 1 1v3.5a1 1 0 0 1-1 1C10.07 22 2 13.93 2 4.5a1 1 0 0 1 1-1H6.5a1 1 0 0 1 1 1c0 1.35.27 2.67.76 3.88a1 1 0 0 1-.21 1.11l-2.2 2.2z"/></svg>
+                        <div>
+                            <span class="text-gray-400 text-xs">OUR PHONE</span><br>
+                            <span class="font-bold">+94 69 6969 69</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-4 text-center text-xs text-gray-400">
+                © 2025 All Rights Reserved @ Salon Aadi| Designed & Developed by A©
+            </div>
+        </footer>
+    </div>
+
+    <!-- Explore Services Button -->
+<!--    <div class="explore-button">-->
+<!--        <a href="service.html" class="text-white text-lg font-semibold hover:text-black hover:bg-white px-8 py-3 rounded-lg transition-all duration-300 inline-block">Explore Services</a>-->
+<!--    </div>-->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize AOS
+            AOS.init({
+                once: true,
+                offset: 200
+            });
+
+            // Check login status and update UI
+            function checkLoginStatus() {
+                const userSection = document.getElementById('userSection');
+                const loginSection = document.getElementById('loginSection');
+                const username = localStorage.getItem('username');
+
+                if (username) {
+                    userSection.classList.remove('hidden');
+                    loginSection.classList.add('hidden');
+                } else {
+                    userSection.classList.add('hidden');
+                    loginSection.classList.remove('hidden');
+                }
+            }
+
+            // Logout function
+            window.logout = function() {
+                localStorage.removeItem('username');
+                localStorage.removeItem('token');
+                window.location.href = '/login.html';
+            };
+
+            // Initialize login status check
+            checkLoginStatus();
+        });
+    </script>
+</body>
+</html> 

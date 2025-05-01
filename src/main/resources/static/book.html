@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image.png" href="favicon.png">
+    <title>Book Appointment - Beauty Salon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background-color: rgba(0, 0, 0);
+            backdrop-filter: blur(5px);
+        }
+        .main-content {
+            padding-top: 80px;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .service-option {
+            transition: all 0.3s ease;
+        }
+        .service-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .service-option.selected {
+            background-color: #f3f4f6;
+            border-color: #4f46e5;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgb(0, 0, 0);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .error {
+            background-color: #f44336;
+        }
+        .blurred-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: url('/salon-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: blur(1px);
+            opacity: 0.9;
+        }
+        .content-overlay {
+            position: relative;
+            z-index: 1;
+            background-color: rgba(255, 255, 255, 0.9);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="bg-black-900">
+    <div class="blurred-background"></div>
+    <div class="content-overlay">
+        <!-- Navbar -->
+        <nav class="navbar p-4">
+            <div class="container mx-auto flex justify-between items-center">
+                <a href="index.html" class="text-white text-xl font-semibold">Beauty Salon</a>
+                <div class="space-x-4">
+                    <a href="index.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Home</a>
+                    <a href="service.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Services</a>
+                    <a href="reviews.html" class="text-white px-4 py-2 hover:bg-gray-700 rounded-lg">Reviews</a>
+                    <a href="book.html" class="text-white px-4 py-2 border-2 border-white hover:bg-white hover:text-black rounded-lg transition duration-300">BOOK NOW</a>
+                    <a href="login.html" id="loginLink" class="text-white px-4 py-2 border-2 border-white hover:bg-white hover:text-black rounded-lg transition duration-300">Login</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="form-container">
+                <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Book Your Appointment</h1>
+                
+                <form id="appointmentForm" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Select Service</label>
+                        <div id="servicesGrid" class="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <!-- Services will be loaded here -->
+                        </div>
+                        <input type="hidden" id="service" name="service" required>
+                        <input type="hidden" id="price" name="price" required>
+                    </div>
+
+                    <div>
+                        <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+                        <input type="date" id="date" name="date" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
+                    </div>
+
+                    <div>
+                        <label for="time" class="block text-sm font-medium text-gray-700">Time</label>
+                        <select id="time" name="time" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
+                            <option value="">Select a time</option>
+                            <option value="09:00">9:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="13:00">1:00 PM</option>
+                            <option value="14:00">2:00 PM</option>
+                            <option value="15:00">3:00 PM</option>
+                            <option value="16:00">4:00 PM</option>
+                            <option value="17:00">5:00 PM</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <button type="submit"
+                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-100 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            Book Appointment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-black shadow-lg mt-12">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                <p class="text-center text-gray-100 text-sm">
+                    © 2024 Beauty Salon. All rights reserved.
+                </p>
+            </div>
+        </footer>
+
+        <!-- Popup for messages -->
+        <div id="popup" class="popup"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const username = localStorage.getItem('username');
+            if (!username) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            // Load services from backend
+            async function loadServices() {
+                try {
+                    const response = await fetch('/api/admin/services');
+                    const data = await response.json();
+                    
+                    if (data.status === 'success') {
+                        const servicesGrid = document.getElementById('servicesGrid');
+                        servicesGrid.innerHTML = data.services.map(service => `
+                            <div class="service-option p-4 border rounded-lg cursor-pointer" 
+                                 data-service="${service.name}" 
+                                 data-price="${service.price}">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="text-lg font-medium">${service.name}</h3>
+                                    </div>
+                                    <span class="text-lg font-semibold text-red-600">Rs${service.price}</span>
+                                </div>
+                            </div>
+                        `).join('');
+
+                        // Add click event listeners to service options
+                        const serviceOptions = document.querySelectorAll('.service-option');
+                        const serviceInput = document.getElementById('service');
+                        const priceInput = document.getElementById('price');
+
+                        serviceOptions.forEach(option => {
+                            option.addEventListener('click', function() {
+                                serviceOptions.forEach(opt => opt.classList.remove('selected'));
+                                this.classList.add('selected');
+                                serviceInput.value = this.dataset.service;
+                                priceInput.value = this.dataset.price;
+                            });
+                        });
+
+                        // Check if service is pre-selected from URL
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const selectedService = urlParams.get('service');
+                        if (selectedService) {
+                            const serviceOption = Array.from(serviceOptions).find(
+                                option => option.dataset.service === selectedService
+                            );
+                            if (serviceOption) {
+                                serviceOption.click();
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading services:', error);
+                    document.getElementById('servicesGrid').innerHTML = `
+                        <div class="col-span-full text-center py-4">
+                            <p class="text-red-600">Failed to load services. Please try again later.</p>
+                        </div>
+                    `;
+                }
+            }
+
+            // Set minimum date to today
+            const dateInput = document.getElementById('date');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.min = today;
+
+            // Initialize page
+            loadServices();
+
+            // Check login status and update navbar
+            function updateNavbar() {
+                const loginLink = document.getElementById('loginLink');
+                const bookNowLink = document.getElementById('bookNowLink');
+                
+                if (username) {
+                    loginLink.href = 'profile.html';
+                    loginLink.innerHTML = '<i class="fas fa-user"></i> Profile';
+                    bookNowLink.href = 'book.html';
+                } else {
+                    loginLink.href = 'login.html';
+                    loginLink.innerHTML = 'Login';
+                    bookNowLink.href = 'login.html';
+                }
+            }
+
+            // Initialize navbar on page load
+            updateNavbar();
+        });
+
+        // Form submission
+        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const username = localStorage.getItem('username');
+            if (!username) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            const service = document.getElementById('service').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const price = document.getElementById('price').value;
+
+            // Redirect to payment page with appointment details
+            window.location.href = `/payment.html?service=${encodeURIComponent(service)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&price=${encodeURIComponent(price)}`;
+        });
+
+        function showPopup(message, isError = false) {
+            const popup = document.getElementById('popup');
+            popup.textContent = message;
+            popup.style.display = 'block';
+            popup.classList.toggle('error', isError);
+            
+            setTimeout(() => {
+                popup.style.display = 'none';
+                popup.classList.remove('error');
+            }, 3000);
+        }
+    </script>
+</body>
+</html> 
