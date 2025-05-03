@@ -15,7 +15,6 @@
 }, {
   "id" : 1745894722768,
   "username" : "rupika",
-
   "password" : "$2a$10$eiO3vMQ1dmc82m08Tst.NubpstermM9Ivd9NtAbLlZ3lLuBEuXXXm",
   "email" : "rvijitha36@gmail.com",
   "fullName" : "Rupika Wijesinghe",
@@ -33,5 +32,12 @@
   "password" : "$2a$10$tiqfM5.IBt4IRg9nkie4zuq7YrdrK6UICmi4NYccbb8woMqRu9nzi",
   "email" : "thulya@gmail.com",
   "fullName" : "thulya",
+  "active" : false
+}, {
+  "id" : 1746084002081,
+  "username" : "anuthmi",
+  "password" : "$2a$10$zRTXNogx4b7Dr/teIo11H.JjZkPOz5N9IjCh9GTs5Rz5IXFbo1qgm",
+  "email" : "anuthmi@gmail.com",
+  "fullName" : "Anuthmi Sethumsa",
   "active" : false
 } ]

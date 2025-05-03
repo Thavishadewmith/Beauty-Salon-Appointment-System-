@@ -75,4 +75,15 @@
   "paymentMethod" : "online",
   "amount" : 40000.0,
   "notes" : ""
+}, {
+  "id" : "cccdce20-860a-43e6-bffa-dbdd7b61b96c",
+  "username" : "anuthmi",
+  "date" : "2025-05-02",
+  "time" : "15:00",
+  "service" : "makeup",
+  "status" : "Pending",
+  "paymentStatus" : "Pending",
+  "paymentMethod" : "cash",
+  "amount" : 40000.0,
+  "notes" : ""
 } ]

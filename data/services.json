@@ -25,9 +25,9 @@
 }, {
   "id" : "6",
   "name" : "makeup",
-  "price" : 40000.0,
+  "price" : 5000.0,
   "duration" : 0,
-  "description" : "makeup application\n"
+  "description" : "Makeup service"
 }, {
   "id" : "59953c72-e3cf-457d-8c7e-74e9a0c99a98",
   "name" : "test 2",
