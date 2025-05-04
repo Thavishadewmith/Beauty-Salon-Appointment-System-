@@ -7,21 +7,21 @@
 }, {
   "id" : "3",
   "name" : "Manicure & Pedicure",
-  "price" : 35.0,
-  "duration" : 75,
-  "description" : "Professional nail care services for hands and feet. Includes shaping, cuticle care, and polish application."
+  "price" : 3500.0,
+  "duration" : 0,
+  "description" : "tes"
 }, {
   "id" : "4",
-  "name" : "Hair Coloring",
-  "price" : 65.0,
-  "duration" : 120,
-  "description" : "Transform your look with our professional hair coloring services. Includes consultation, color application, and styling."
+  "name" : "Hair Colouring ",
+  "price" : 4000.0,
+  "duration" : 0,
+  "description" : ""
 }, {
   "id" : "5",
   "name" : "Massage Therapy",
-  "price" : 55.0,
-  "duration" : 60,
-  "description" : "Relax and rejuvenate with our therapeutic massage services. Includes full body massage and aromatherapy."
+  "price" : 2000.0,
+  "duration" : 0,
+  "description" : ""
 }, {
   "id" : "6",
   "name" : "makeup",
@@ -29,21 +29,9 @@
   "duration" : 0,
   "description" : "Makeup service"
 }, {
-  "id" : "59953c72-e3cf-457d-8c7e-74e9a0c99a98",
-  "name" : "test 2",
-  "price" : 33.0,
-  "duration" : 0,
-  "description" : "12"
-}, {
   "id" : "1bcce8c8-b1f3-4844-8d21-8622accf240a",
-  "name" : "Massage",
-  "price" : 35.0,
+  "name" : "Facial",
+  "price" : 2000.0,
   "duration" : 0,
-  "description" : "test"
-}, {
-  "id" : "add2a8be-9f7e-4ad4-b8e9-8a60d4fadb24",
-  "name" : "test3",
-  "price" : 30000.0,
-  "duration" : 0,
-  "description" : "testttttt"
+  "description" : ""
 } ]

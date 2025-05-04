@@ -86,4 +86,59 @@
   "paymentMethod" : "cash",
   "amount" : 40000.0,
   "notes" : ""
+}, {
+  "id" : "9057b216-e917-4b1b-8605-838e7fd39aa9",
+  "username" : "admin",
+  "date" : "2025-06-07",
+  "time" : "13:00",
+  "service" : "test 2",
+  "status" : "Pending",
+  "paymentStatus" : "Pending",
+  "paymentMethod" : "cash",
+  "amount" : 33.0,
+  "notes" : ""
+}, {
+  "id" : "4cf9ab0e-d386-4cf8-81ed-c5a802c9e624",
+  "username" : "admin",
+  "date" : "2025-05-21",
+  "time" : "15:00",
+  "service" : "test 2",
+  "status" : "Pending",
+  "paymentStatus" : "Pending",
+  "paymentMethod" : "cash",
+  "amount" : 33.0,
+  "notes" : ""
+}, {
+  "id" : "118efd8b-e422-4e24-b4c8-c450f188f34c",
+  "username" : "admin",
+  "date" : "2025-06-04",
+  "time" : "14:00",
+  "service" : "test3",
+  "status" : "Pending",
+  "paymentStatus" : "Pending",
+  "paymentMethod" : "cash",
+  "amount" : 30000.0,
+  "notes" : ""
+}, {
+  "id" : "d467210c-7f5f-4cdb-8395-958867ad0a34",
+  "username" : "admin",
+  "date" : "2025-06-04",
+  "time" : "14:00",
+  "service" : "test3",
+  "status" : "Pending",
+  "paymentStatus" : "Paid",
+  "paymentMethod" : "online",
+  "amount" : 30000.0,
+  "notes" : ""
+}, {
+  "id" : "383c6262-1934-414c-8bea-7f7fe909a50b",
+  "username" : "admin",
+  "date" : "2025-05-07",
+  "time" : "14:00",
+  "service" : "makeup",
+  "status" : "Pending",
+  "paymentStatus" : "Pending",
+  "paymentMethod" : "cash",
+  "amount" : 5000.0,
+  "notes" : ""
 } ]
