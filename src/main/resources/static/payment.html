@@ -169,7 +169,7 @@
                 day: 'numeric'
             });
             document.getElementById('timeSummary').textContent = time;
-            document.getElementById('priceSummary').textContent = `$${price}`;
+            document.getElementById('priceSummary').textContent = `Rs${price}`;
 
             // Payment method selection
             const paymentOptions = document.querySelectorAll('.payment-option');
@@ -247,7 +247,16 @@
 
                     showPopup('Appointment booked successfully!');
                     setTimeout(() => {
-                        window.location.href = '/profile.html';
+                        // Redirect to receipt page with booking details
+                        const receiptUrl = new URL('/receipt.html', window.location.origin);
+                        receiptUrl.searchParams.set('service', service);
+                        receiptUrl.searchParams.set('date', date);
+                        receiptUrl.searchParams.set('time', time);
+                        receiptUrl.searchParams.set('price', price);
+                        receiptUrl.searchParams.set('paymentMethod', paymentMethod);
+                        receiptUrl.searchParams.set('paymentStatus', paymentMethod === 'online' ? 'Paid' : 'Pending');
+                        receiptUrl.searchParams.set('username', username);
+                        window.location.href = receiptUrl.toString();
                     }, 1500);
                 } catch (error) {
                     console.error('Error:', error);
